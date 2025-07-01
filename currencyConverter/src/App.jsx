@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import InputBox from "./components/InputBox";
 import useCurrencyInfo from './hooks/useCurrencyInfo'
 function App() {
-  const [amount,setAmount] = useState();
+  const [amount,setAmount] = useState(Number(0));
   const [from,setFrom] = useState("inr");
   const [to,setTo] = useState("usd");
-  const [convertedAmount,setConvertedAmount] = useState();
+  const [convertedAmount,setConvertedAmount] = useState(Number(0));
   const currencyInfo = useCurrencyInfo(from);
   const options = Object.keys(currencyInfo);
   const swap = () => {
@@ -15,8 +15,12 @@ function App() {
     setConvertedAmount(amount);
     setAmount(convertedAmount);
   }
+  useEffect(()=>{
+    convert();
+  },[amount,to,from,convertedAmount]);
   const convert = ()=>{
-    setConvertedAmount(amount*(currencyInfo[to]/currencyInfo[from]));
+    if(amount != 0)setConvertedAmount(amount*(currencyInfo[to]/currencyInfo[from]));
+    else setConvertedAmount(0);
   }
   return (
         <div
@@ -57,13 +61,12 @@ function App() {
                                 label="To"
                                 amount={convertedAmount}
                                 currencyOptions = {options}
+                                onAmountChange={setConvertedAmount}
                                 onCurrencyChange={setTo}
                                 selectCurrency={to}
+                                readOnly = {true}
                             />
                         </div>
-                        <button type="submit" className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg">
-                            Convert {from.toUpperCase()} to {to.toUpperCase()}
-                        </button>
                     </form>
                 </div>
             </div>

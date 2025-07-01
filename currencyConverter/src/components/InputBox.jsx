@@ -7,6 +7,7 @@ function InputBox({
     currencyOptions = [],
     selectCurrency="usd",
     className = "",
+    readOnly=false,
 }) {
    
 
@@ -21,7 +22,14 @@ function InputBox({
                     type="number"
                     placeholder="Amount"
                     value = {amount}
-                    onChange={(e)=>onAmountChange && onAmountChange(Number(e.target.value),amount = Number(e.target.value))}
+                    onChange={(e)=>{
+                        if(!readOnly){
+                            if(e.target.value[0] == '0') e.target.value = Number(e.target.value);
+                            onAmountChange && onAmountChange(Number(e.target.value));
+                        }
+                        
+                    }}
+                    readOnly = {readOnly}
                 />
             </div>
             <div className="w-1/2 flex flex-wrap justify-end text-right">
